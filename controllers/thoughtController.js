@@ -25,7 +25,7 @@ module.exports = {
         Thought.create(req.body)
         .then(({ _id }) => {
             return User.findOneAndUpdate(
-      { _id: req.params.userId },
+      { _id: req.body.userId },
       { $addToSet: { thoughts: _id } },
       { runValidators: true, new: true }
       )  
