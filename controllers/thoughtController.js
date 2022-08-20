@@ -23,12 +23,22 @@ module.exports = {
     // Create a thought
     createThought(req, res) {
         Thought.create(req.body)
-        .then((thought) => res.json(thought))
-        .catch((err) => {
-            console.log(err);
-            return res.status(500).json(err);
-        });
-    },
+        .then(({ _id }) => {
+            return User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $addToSet: { thoughts: _id } },
+      { runValidators: true, new: true }
+      )  
+    })  
+      .then((thought) =>
+        !thought
+          ? res
+              .status(404)
+              .json({ message: 'No User found with that ID :(' })
+          : res.json(thought)
+      )
+      .catch((err) => res.status(500).json(err));
+  },
 
     // Update a Thought
     updateThought(req, res) {
